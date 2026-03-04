@@ -194,7 +194,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   next?.addEventListener('click', () => track.scrollBy({ left: step, behavior: 'smooth' }));
 })();
 
-// Contact form validation + local handling
+// Contact form validation + AJAX (FormSubmit)
 (function () {
   const form = document.getElementById('contactForm');
   const toast = document.getElementById('toast');
@@ -206,20 +206,14 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     toast.style.borderColor = ok ? 'var(--outline)' : '#d9534f';
     toast.style.backgroundColor = ok ? 'var(--bg)' : '#fee';
     toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 4000);
+    setTimeout(() => toast.classList.remove('show'), 6000);
   }
 
   function isValidEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
-  function createMailtoLink(name, email, message) {
-    const subject = encodeURIComponent(`Portfolio Contact from ${name}`);
-    const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
-    return `mailto:lahsenoumoulid2003@gmail.com?subject=${subject}&body=${body}`;
-  }
-
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const data = new FormData(form);
 
@@ -243,19 +237,30 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
     const submitBtn = form.querySelector('button[type="submit"]');
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Opening email client...';
+    submitBtn.textContent = 'Sending...';
 
-    // Create mailto link and open default email client
-    const mailtoLink = createMailtoLink(name, email, message);
-    window.location.href = mailtoLink;
+    try {
+      const res = await fetch('https://formsubmit.co/ajax/lahsenoumoulid2003@gmail.com', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json'
+        },
+        body: data
+      });
 
-    // Show success message and reset form
-    setTimeout(() => {
-      form.reset();
-      showToast('Email client opened! Please send the pre-filled email.');
+      if (res.ok) {
+        form.reset();
+        showToast('IMPORTANT: Only for the FIRST time, please check your email inbox to activate FormSubmit!');
+      } else {
+        showToast('Failed to send message. Please try again later.', false);
+      }
+    } catch (err) {
+      console.error('Contact form error:', err);
+      showToast('Network error while sending message. Check your connection.', false);
+    } finally {
       submitBtn.disabled = false;
       submitBtn.textContent = 'Send Message';
-    }, 1000);
+    }
   });
 })();
 

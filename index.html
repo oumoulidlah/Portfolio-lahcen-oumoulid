@@ -623,25 +623,12 @@
                                     class="ri-whatsapp-line"></i> WhatsApp</a></li>
                     </ul>
                 </div>
-                <!-- 
-                    CONTACT FORM SETUP OPTIONS:
-                    
-                    Option 1 (Current): Uses mailto links to open email client
-                    - Works immediately without setup
-                    - Opens user's default email client with pre-filled message
-                    
-                    Option 2: Use Formspree (recommended for production)
-                    - Sign up at https://formspree.io
-                    - Create a new form and get your endpoint
-                    - Replace action="#" with action="https://formspree.io/f/YOUR_FORM_ID"
-                    - Update the JavaScript to use the original AJAX submission code
-                    
-                    Option 3: Use Netlify Forms (if hosting on Netlify)
-                    - Add netlify attribute to form tag
-                    - No JavaScript needed, works automatically
-                -->
-                <form class="contact-form" id="contactForm" action="#" method="POST" novalidate
-                    aria-label="Contact form">
+                <form class="contact-form" id="contactForm" action="https://formsubmit.co/lahsenoumoulid2003@gmail.com"
+                    method="POST" novalidate aria-label="Contact form">
+                    <!-- FormSubmit Configuration Fields -->
+                    <input type="hidden" name="_subject" value="New Portfolio Contact!">
+                    <input type="hidden" name="_captcha" value="false">
+                    <input type="hidden" name="_template" value="table">
                     <label>
                         <span>Name</span>
                         <input type="text" name="name" placeholder="Your name" autocomplete="name" required>
