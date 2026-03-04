@@ -194,7 +194,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   next?.addEventListener('click', () => track.scrollBy({ left: step, behavior: 'smooth' }));
 })();
 
-// Contact form validation + AJAX (FormSubmit)
+// Contact form validation + AJAX (Formspree)
 (function () {
   const form = document.getElementById('contactForm');
   const toast = document.getElementById('toast');
@@ -235,12 +235,16 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       return showToast('Please enter a more detailed message', false);
     }
 
+    if (form.action.includes('YOUR_FORM_ID')) {
+      return showToast('Error: Formspree ID not set! Please replace YOUR_FORM_ID in index.html.', false);
+    }
+
     const submitBtn = form.querySelector('button[type="submit"]');
     submitBtn.disabled = true;
     submitBtn.textContent = 'Sending...';
 
     try {
-      const res = await fetch('https://formsubmit.co/ajax/lahsenoumoulid2003@gmail.com', {
+      const res = await fetch(form.action, {
         method: 'POST',
         headers: {
           'Accept': 'application/json'
@@ -250,9 +254,14 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
       if (res.ok) {
         form.reset();
-        showToast('IMPORTANT: Only for the FIRST time, please check your email inbox to activate FormSubmit!');
+        showToast('Message sent successfully! I will get back to you soon.');
       } else {
-        showToast('Failed to send message. Please try again later.', false);
+        const errorData = await res.json();
+        if (errorData.errors) {
+          showToast(errorData.errors.map(err => err.message).join(', '), false);
+        } else {
+          showToast('Failed to send message. Please try again later.', false);
+        }
       }
     } catch (err) {
       console.error('Contact form error:', err);
